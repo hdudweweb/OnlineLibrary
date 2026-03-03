@@ -1,0 +1,145 @@
+﻿<Page x:Class="OnlineLibrary1.Pages.CatalogPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:OnlineLibrary1.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="CatalogPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Панель поиска -->
+        <Border Grid.Row="0" 
+                Background="#f5f5f5" 
+                Padding="15"
+                Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Поле поиска -->
+                <TextBox Name="SearchTextBox" 
+                        Grid.Column="0"
+                        TextChanged="SearchTextBox_TextChanged"
+                        Padding="10"
+                        FontSize="14"
+                        VerticalContentAlignment="Center">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
+                    </TextBox.InputBindings>
+                </TextBox>
+
+                <!-- Кнопка поиска -->
+                <Button Grid.Column="1"
+                        Content="Поиск"
+                        Click="SearchButton_Click"
+                        Margin="10,0"
+                        Padding="15,5"/>
+
+                <!-- Фильтр поиска -->
+                <ComboBox Name="SearchTypeComboBox" 
+                         Grid.Column="2"
+                         Width="150"
+                         SelectionChanged="SearchTypeComboBox_SelectionChanged">
+                    <ComboBoxItem Content="По названию" IsSelected="True"/>
+                    <ComboBoxItem Content="По автору"/>
+                    <ComboBoxItem Content="По жанру"/>
+                    <ComboBoxItem Content="По году"/>
+                    <ComboBoxItem Content="По ISBN"/>
+                </ComboBox>
+
+                <!-- Дополнительные фильтры -->
+                <StackPanel Grid.Column="3" 
+                           Orientation="Horizontal">
+                    <ComboBox Name="GenreFilterComboBox" 
+                             Width="120"
+                             Margin="10,0,5,0"
+                             Visibility="Collapsed"
+                             SelectionChanged="FilterChanged">
+                        <ComboBoxItem Content="Все жанры"/>
+                        <ComboBoxItem Content="Фантастика"/>
+                        <ComboBoxItem Content="Детектив"/>
+                        <ComboBoxItem Content="Роман"/>
+                        <ComboBoxItem Content="Научная литература"/>
+                        <ComboBoxItem Content="Поэзия"/>
+                        <ComboBoxItem Content="Классика"/>
+                        <ComboBoxItem Content="Приключения"/>
+                    </ComboBox>
+
+                    <ComboBox Name="YearFilterComboBox" 
+                             Width="100"
+                             Margin="5,0,5,0"
+                             Visibility="Collapsed"
+                             SelectionChanged="FilterChanged">
+                        <ComboBoxItem Content="Все годы"/>
+                        <ComboBoxItem Content="2024"/>
+                        <ComboBoxItem Content="2023"/>
+                        <ComboBoxItem Content="2022"/>
+                        <ComboBoxItem Content="2021"/>
+                        <ComboBoxItem Content="2020"/>
+                        <ComboBoxItem Content="До 2020"/>
+                        <ComboBoxItem Content="До 2000"/>
+                        <ComboBoxItem Content="До 1900"/>
+                    </ComboBox>
+
+                    <ComboBox Name="AgeFilterComboBox" 
+                             Width="100"
+                             Margin="5,0,0,0"
+                             Visibility="Collapsed"
+                             SelectionChanged="FilterChanged">
+                        <ComboBoxItem Content="Все возрасты"/>
+                        <ComboBoxItem Content="0+"/>
+                        <ComboBoxItem Content="6+"/>
+                        <ComboBoxItem Content="12+"/>
+                        <ComboBoxItem Content="16+"/>
+                        <ComboBoxItem Content="18+"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Результаты поиска -->
+        <ScrollViewer Grid.Row="1">
+            <UniformGrid Name="BooksContainer" 
+                        Columns="4"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+                <!-- Книги будут добавляться динамически -->
+            </UniformGrid>
+        </ScrollViewer>
+
+        <!-- Сообщение если нет результатов -->
+        <Border Name="NoResultsPanel" 
+               Grid.Row="1"
+               Visibility="Collapsed"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center">
+            <StackPanel>
+                <TextBlock Text="📚" 
+                          FontSize="48"
+                          HorizontalAlignment="Center"
+                          Margin="0,0,0,10"/>
+                <TextBlock Text="Ничего не найдено" 
+                          FontSize="18"
+                          FontWeight="Bold"
+                          Foreground="#666"
+                          HorizontalAlignment="Center"/>
+                <TextBlock Text="Попробуйте изменить параметры поиска"
+                          Foreground="#999"
+                          HorizontalAlignment="Center"
+                          Margin="0,10,0,0"/>
+            </StackPanel>
+        </Border>
+        
+    </Grid>
+</Page>
