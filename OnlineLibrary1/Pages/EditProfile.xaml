@@ -8,7 +8,158 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="EditProfile">
 
-    <Grid>
-        
-    </Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Background="White"
+                    CornerRadius="12"
+                    BorderBrush="#E6EAF0"
+                    BorderThickness="1"
+                    Padding="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                        <TextBlock Text="Редактирование профиля"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="#1F2D3D"/>
+                        <TextBlock x:Name="SubtitleText"
+                                   Text="Измените данные и нажмите «Сохранить»"
+                                   Margin="0,4,0,0"
+                                   Foreground="#637081"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Warning -->
+            <Border x:Name="NotAuthPanel"
+                    Grid.Row="1"
+                    Margin="0,12,0,0"
+                    Background="#FFF3CD"
+                    BorderBrush="#FFECB5"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="12"
+                    Visibility="Collapsed">
+                <TextBlock Text="Вы не авторизованы. Нельзя редактировать профиль."
+                           Foreground="#664D03"
+                           TextWrapping="Wrap"/>
+            </Border>
+
+            <!-- Form -->
+            <Border Grid.Row="2"
+                    Background="White"
+                    CornerRadius="12"
+                    BorderBrush="#E6EAF0"
+                    BorderThickness="1"
+                    Padding="16"
+                    Margin="0,12,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Username -->
+                    <TextBlock Text="Имя пользователя" Foreground="#637081"/>
+                    <Border Margin="0,6,0,0"
+                            Background="#F3F6FA"
+                            BorderBrush="#E6EAF0"
+                            BorderThickness="1"
+                            >
+                        <TextBox x:Name="UsernameBox"
+                                 Height="34"
+                                 Padding="10,6"
+                                 Background="Transparent"
+                                 VerticalContentAlignment="Center"
+                                 FontSize="13"
+                                 Foreground="#1F2D3D"/>
+                    </Border>
+
+                    <!-- Email -->
+                    <TextBlock Grid.Row="1" Margin="0,12,0,0" Text="Email" Foreground="#637081"/>
+                    <Border Grid.Row="1"
+                            Margin="0,18,0,0"
+                            Background="#F3F6FA"
+                            BorderBrush="#E6EAF0"
+                            BorderThickness="1"
+                            >
+                        <TextBox x:Name="EmailBox"
+                                 Height="34"
+                                 Padding="10,6"
+                                 Background="Transparent"
+                                 VerticalContentAlignment="Center"
+                                 FontSize="13"
+                                 Foreground="#1F2D3D"/>
+                    </Border>
+
+                    <!-- Error -->
+                    <TextBlock x:Name="ErrorText"
+                               Grid.Row="2"
+                               Margin="0,12,0,0"
+                               Foreground="#E74C3C"
+                               Visibility="Collapsed"
+                               TextWrapping="Wrap"/>
+
+                    <!-- Buttons -->
+                    <StackPanel Grid.Row="3"
+                                Orientation="Horizontal"
+                                Margin="0,14,0,0">
+                        <Button Content="Сохранить"
+                                Padding="14,7"
+                                Background="#2E8B57"
+                                Foreground="White"
+                                Cursor="Hand"
+                                Click="Save_Click" Width="85">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" >
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button Content="Отмена"
+                                Margin="10,0,0,0"
+                                Padding="14,7"
+                                Background="#F3F6FA"
+                                Foreground="#1F2D3D"
+                                BorderBrush="#E6EAF0"
+                                
+                                Cursor="Hand"
+                                Click="Cancel_Click" Width="60">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}" >
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="4"
+                               Margin="0,10,0,0"
+                               Foreground="#637081"
+                               Text="Email используется для входа. После изменения вход будет по новому Email."/>
+                </Grid>
+            </Border>
+        </Grid>
+    </ScrollViewer>
 </Page>
