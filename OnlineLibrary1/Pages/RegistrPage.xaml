@@ -24,17 +24,17 @@
                               Margin="0,0,0,20"/>
 
                     <TextBlock Text="Имя" Margin="0,0,0,5"/>
-                    <TextBox x:Name="FirstNameBox" Margin="0,0,0,10"/>
+                    <TextBox x:Name="UserNameBox" Margin="0,0,0,10"/>
 
 
                     <TextBlock Text="Email" Margin="0,0,0,5"/>
                     <TextBox x:Name="EmailBox" Margin="0,0,0,10"/>
 
                     <TextBlock Text="Пароль" Margin="0,0,0,5"/>
-                    <TextBox x:Name="PasswordBox" Margin="0,0,0,10"/>
+                    <PasswordBox x:Name="PasswordBox" Margin="0,0,0,10"/>
 
                     <TextBlock Text="Повторите пароль" Margin="0,0,0,5"/>
-                    <TextBox x:Name="ConfirmPasswordBox" Margin="0,0,0,20"/>
+                    <PasswordBox x:Name="ConfirmPasswordBox" Margin="0,0,0,20"/>
 
                     <CheckBox x:Name="AgreementCheckBox" 
                              Content="Я согласен с условиями использования"
@@ -44,6 +44,12 @@
                            Padding="15,10"
                            Click="Register_Click"
                            Margin="0,0,0,10"/>
+                    <TextBlock x:Name="ErrorText"
+                               Grid.Row="5"
+                               Margin="0,12,0,0"
+                               Foreground="#E74C3C"
+                               Visibility="Collapsed"
+                               TextWrapping="Wrap"/>
 
                     <Button Content="Уже есть аккаунт? Войти" 
                            Padding="10,5"
