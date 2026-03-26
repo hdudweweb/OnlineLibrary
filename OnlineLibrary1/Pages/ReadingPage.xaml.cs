@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,25 +24,100 @@ namespace OnlineLibrary1.Pages
     /// </summary>
     public partial class ReadingPage : Page
     {
+        private readonly string connectionString =ConfigurationManager.ConnectionStrings["bibleoteka"].ConnectionString;
+
+        private readonly int bookId;
+        private List<string> pages = new List<string>();
         private int currentPage = 1;
-        private int totalPages = 100;
 
         public ReadingPage(string bookTitle)
         {
             InitializeComponent();
-            BookTitleText.Text = bookTitle;
-            LoadPageContent();
+            this.bookId = bookId;
+            LoadBook();
         }
 
-        private void LoadPageContent()
+        private void LoadBook()
         {
-            // Загрузка содержимого страницы (в реальном приложении из БД)
-            BookContentText.Text = $"Страница {currentPage}\n\n" +
-                                  "Здесь будет текст книги. В реальном приложении " +
-                                  "текст будет загружаться из базы данных постранично.\n\n" +
-                                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-                                  "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+            const string sql = @"
+        SELECT [Name], BookFile, FileName, ContentType
+        FROM Book
+        WHERE BookId = @id";
 
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.AddWithValue("@id", bookId);
+                conn.Open();
+
+                using (var r = cmd.ExecuteReader())
+                {
+                    if (!r.Read())
+                    {
+                        MessageBox.Show("Книга не найдена.");
+                        return;
+                    }
+
+                    string title = r["Name"]?.ToString() ?? "Книга";
+                    byte[] fileBytes = r["BookFile"] == DBNull.Value ? null : (byte[])r["BookFile"];
+                    string fileName = r["FileName"]?.ToString() ?? "";
+                    string contentType = r["ContentType"]?.ToString() ?? "";
+
+                    BookTitleText.Text = title;
+
+                    if (fileBytes == null || fileBytes.Length == 0)
+                    {
+                        BookContentText.Text = "Файл книги отсутствует.";
+                        return;
+                    }
+
+                    if (contentType.Contains("pdf") || fileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                    {
+                        string tempPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(),
+                            string.IsNullOrWhiteSpace(fileName) ? $"book_{bookId}.pdf" : fileName);
+
+                        File.WriteAllBytes(tempPath, fileBytes);
+                        Process.Start(new ProcessStartInfo(tempPath) { UseShellExecute = true });
+
+                        BookContentText.Text = "PDF открыт во внешнем приложении.";
+                        return;
+                    }
+
+                    string text = Encoding.UTF8.GetString(fileBytes);
+                    BuildPages(text);
+                    ShowCurrentPage();
+                }
+            }
+        }
+        private void BuildPages(string text)
+        {
+            pages.Clear();
+
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                pages.Add("Текст книги пуст.");
+                return;
+            }
+
+            const int pageSize = 2500;
+            for (int i = 0; i < text.Length; i += pageSize)
+            {
+                int len = Math.Min(pageSize, text.Length - i);
+                pages.Add(text.Substring(i, len));
+            }
+
+            currentPage = 1;
+        }
+        private void ShowCurrentPage()
+        {
+            if (pages.Count == 0)
+            {
+                BookContentText.Text = "Нет данных.";
+                PageNumberText.Text = "0";
+                return;
+            }
+
+            BookContentText.Text = pages[currentPage - 1];
             PageNumberText.Text = currentPage.ToString();
         }
 
@@ -57,7 +136,7 @@ namespace OnlineLibrary1.Pages
         private void FirstPage_Click(object sender, RoutedEventArgs e)
         {
             currentPage = 1;
-            LoadPageContent();
+            LoadBook();
         }
 
         private void PrevPage_Click(object sender, RoutedEventArgs e)
@@ -65,23 +144,23 @@ namespace OnlineLibrary1.Pages
             if (currentPage > 1)
             {
                 currentPage--;
-                LoadPageContent();
+                LoadBook();
             }
         }
 
         private void NextPage_Click(object sender, RoutedEventArgs e)
         {
-            if (currentPage < totalPages)
+            if (currentPage < pages.Count)
             {
                 currentPage++;
-                LoadPageContent();
+                LoadBook();
             }
         }
 
         private void LastPage_Click(object sender, RoutedEventArgs e)
         {
-            currentPage = totalPages;
-            LoadPageContent();
+            currentPage = pages.Count;
+            LoadBook();
         }
     }
 }

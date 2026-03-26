@@ -27,8 +27,8 @@ namespace OnlineLibrary1.Pages
         private readonly string connectionString =
             ConfigurationManager.ConnectionStrings["bibleoteka"].ConnectionString;
 
-        // TODO: заменить на текущего пользователя после логина
-        private const int CurrentUserId = 1;
+
+        private int? CurrentUserId => AppSession.UserId;
 
         private List<MyBookItem> all = new List<MyBookItem>();
         private List<MyBookItem> filtered = new List<MyBookItem>();
@@ -36,7 +36,13 @@ namespace OnlineLibrary1.Pages
         public MyBooksPage()
         {
             InitializeComponent();
-            StatusFilterComboBox.SelectedIndex = 0;
+            if (!AppSession.IsAuthenticated || !CurrentUserId.HasValue)
+            {
+                BooksList.ItemsSource = null;
+                CountText.Text = "0 книг";
+                NoResultsPanel.Visibility = Visibility.Visible;
+                return;
+            }
             LoadMyBooks();
             ApplyFilter();
         }
@@ -75,8 +81,8 @@ namespace OnlineLibrary1.Pages
                 using (var conn = new SqlConnection(connectionString))
                 using (var cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@userId", CurrentUserId);
-
+                    if (!CurrentUserId.HasValue) return;
+                    cmd.Parameters.AddWithValue("@userId", CurrentUserId.Value);
                     conn.Open();
                     using (var r = cmd.ExecuteReader())
                     {
@@ -175,7 +181,8 @@ namespace OnlineLibrary1.Pages
                 using (var cmd = new SqlCommand(
                            "DELETE FROM Favorites WHERE UserId = @userId AND BookId = @bookId", conn))
                 {
-                    cmd.Parameters.AddWithValue("@userId", CurrentUserId);
+                    if (!CurrentUserId.HasValue) return;
+                    cmd.Parameters.AddWithValue("@userId", CurrentUserId.Value);
                     cmd.Parameters.AddWithValue("@bookId", id);
 
                     conn.Open();
@@ -206,7 +213,8 @@ namespace OnlineLibrary1.Pages
                 using (var conn = new SqlConnection(connectionString))
                 using (var cmd = new SqlCommand("DELETE FROM Favorites WHERE UserId = @userId", conn))
                 {
-                    cmd.Parameters.AddWithValue("@userId", CurrentUserId);
+                    if (!CurrentUserId.HasValue) return;
+                    cmd.Parameters.AddWithValue("@userId", CurrentUserId.Value);
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }

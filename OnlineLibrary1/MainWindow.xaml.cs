@@ -23,24 +23,31 @@ namespace OnlineLibrary1
     public partial class MainWindow : Window
     {
         private MainWindow _mainWindows;
+
+        private void ApplyRoleVisibility()
+        {
+            bool auth = AppSession.IsAuthenticated;
+            bool isAdmin = string.Equals(AppSession.Role, "Администратор", StringComparison.OrdinalIgnoreCase);
+
+            btnMyBooks.Visibility = auth ? Visibility.Visible : Visibility.Collapsed;
+            btnProfile.Visibility = auth ? Visibility.Visible : Visibility.Collapsed;
+            btnAddBook.Visibility = isAdmin ? Visibility.Visible : Visibility.Collapsed;
+            btnAdmin.Visibility = isAdmin ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+
         public void SetAuthorized(bool isAuthorized)
         {
-            if (isAuthorized)
-            {
-                btnLogin.Visibility = Visibility.Collapsed;
-                btnRegister.Visibility = Visibility.Collapsed;
-                btnLogout.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                btnLogin.Visibility = Visibility.Visible;
-                btnRegister.Visibility = Visibility.Visible;
-                btnLogout.Visibility = Visibility.Collapsed;
-            }
+            btnLogin.Visibility = isAuthorized ? Visibility.Collapsed : Visibility.Visible;
+            btnRegister.Visibility = isAuthorized ? Visibility.Collapsed : Visibility.Visible;
+            btnLogout.Visibility = isAuthorized ? Visibility.Visible : Visibility.Collapsed;
+
+            ApplyRoleVisibility();
         }
         public MainWindow()
         {
             InitializeComponent();
+            ApplyRoleVisibility();
             MainFrame.Navigate(new CatalogPage());
             
         }

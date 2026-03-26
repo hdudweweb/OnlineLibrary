@@ -129,7 +129,7 @@ ORDER BY b.[Name];";
         {
             try
             {
-                // Жанры
+        
                 if (GenreFilterComboBox != null)
                 {
                     GenreFilterComboBox.Items.Clear();
@@ -149,7 +149,7 @@ ORDER BY b.[Name];";
                     GenreFilterComboBox.SelectedIndex = 0;
                 }
 
-                // Годы (только те, что есть в Book)
+          
                 if (YearFilterComboBox != null)
                 {
                     YearFilterComboBox.Items.Clear();
@@ -172,7 +172,7 @@ ORDER BY b.[Name];";
                     YearFilterComboBox.SelectedIndex = 0;
                 }
 
-                // Возраст
+     
                 if (AgeFilterComboBox != null)
                 {
                     AgeFilterComboBox.Items.Clear();
@@ -194,7 +194,7 @@ ORDER BY b.[Name];";
             }
             catch
             {
-                // фильтры не критичны
+            
             }
         }
 
@@ -243,7 +243,7 @@ ORDER BY b.[Name];";
 
             var stackPanel = new StackPanel { Margin = new Thickness(0) };
 
-            // Обложка
+     
             var coverBorder = new Border
             {
                 Height = 180,
@@ -282,7 +282,7 @@ ORDER BY b.[Name];";
             var coverGrid = new Grid();
             coverGrid.Children.Add(bookIcon);
 
-            // Рейтинг (в БД пока нет — показываем «—»)
+            // Рейтинга пока нет 
             var ratingBorder = new Border
             {
                 Background = new SolidColorBrush(Color.FromArgb(220, 255, 255, 255)),
@@ -316,7 +316,7 @@ ORDER BY b.[Name];";
             coverBorder.Child = coverGrid;
             stackPanel.Children.Add(coverBorder);
 
-            // Название
+           
             var titleText = new TextBlock
             {
                 Text = book.Title,
@@ -328,7 +328,7 @@ ORDER BY b.[Name];";
                 TextTrimming = TextTrimming.CharacterEllipsis,
             };
 
-            // Автор
+  
             var authorText = new TextBlock
             {
                 Text = book.Author,
@@ -339,7 +339,7 @@ ORDER BY b.[Name];";
                 TextTrimming = TextTrimming.CharacterEllipsis
             };
 
-            // Инфо
+       
             var infoGrid = new Grid { Margin = new Thickness(10, 0, 10, 5) };
             infoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             infoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -425,7 +425,7 @@ ORDER BY b.[Name];";
             }
         }
 
-        // Поиск
+
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) => PerformSearch();
         private void SearchButton_Click(object sender, RoutedEventArgs e) => PerformSearch();
 
@@ -496,7 +496,7 @@ ORDER BY b.[Name];";
                     }
                 }
 
-                // Фильтры
+            
                 if (GenreFilterComboBox != null && GenreFilterComboBox.Visibility == Visibility.Visible)
                 {
                     if (GenreFilterComboBox.SelectedItem is ComboBoxItem genreItem)

@@ -43,7 +43,7 @@ namespace OnlineLibrary1.Pages
         private void ReloadAll()
         {
             LoadProfile();
-            LoadAvatarFromDisk();
+            LoadAvatarFromDb();
             LoadStats();
         }
 
@@ -125,7 +125,7 @@ namespace OnlineLibrary1.Pages
                 var raw = File.ReadAllText("profile.txt");
                 var parts = raw.Split('|');
 
-                // Формат из RegistrPage: "Имя |email|dd.MM.yyyy"
+                
                 var name = parts.Length > 0 ? parts[0].Trim() : "Гость";
                 var email = parts.Length > 1 ? parts[1].Trim() : "—";
                 var created = parts.Length > 2 ? parts[2].Trim() : "—";
@@ -165,14 +165,14 @@ namespace OnlineLibrary1.Pages
                 {
                     con.Open();
 
-                    // Всего
+                   
                     using (var cmdTotal = new SqlCommand("SELECT COUNT(*) FROM Favorites WHERE UserId = @id", con))
                     {
                         cmdTotal.Parameters.AddWithValue("@id", _userId.Value);
                         TotalBooksText.Text = Convert.ToInt32(cmdTotal.ExecuteScalar() ?? 0).ToString();
                     }
 
-                    // Есть ли поле Status
+                    
                     bool hasStatus;
                     using (var cmdHas = new SqlCommand(
                         "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='Favorites' AND COLUMN_NAME='Status'", con))
@@ -187,7 +187,7 @@ namespace OnlineLibrary1.Pages
                         return;
                     }
 
-                    // По статусам
+                    
                     using (var cmd = new SqlCommand(
                         "SELECT Status, COUNT(*) AS Cnt FROM Favorites WHERE UserId = @id GROUP BY Status", con))
                     {
@@ -235,19 +235,26 @@ namespace OnlineLibrary1.Pages
             return System.IO.Path.Combine(dir, $"avatar_{key}.png");
         }
 
-        private void LoadAvatarFromDisk()
+        private void LoadAvatarFromDb()
         {
+            if (!_userId.HasValue)
+            {
+                SetAvatar(null);
+                return;
+            }
+
             try
             {
-                var path = GetAvatarPath();
-                if (!File.Exists(path))
+                using (var con = new SqlConnection(_cs))
+                using (var cmd = new SqlCommand("SELECT Avatar FROM Users WHERE UsersId = @id", con))
                 {
-                    SetAvatar(null);
-                    return;
-                }
+                    cmd.Parameters.AddWithValue("@id", _userId.Value);
+                    con.Open();
 
-                var bytes = File.ReadAllBytes(path);
-                SetAvatar(bytes);
+                    var result = cmd.ExecuteScalar();
+                    var bytes = result == null || result == DBNull.Value ? null : (byte[])result;
+                    SetAvatar(bytes);
+                }
             }
             catch
             {
@@ -288,6 +295,12 @@ namespace OnlineLibrary1.Pages
 
         private void UploadAvatar_Click(object sender, RoutedEventArgs e)
         {
+            if (!_userId.HasValue)
+            {
+                MessageBox.Show("Сначала войдите в аккаунт.");
+                return;
+            }
+
             var dlg = new OpenFileDialog
             {
                 Filter = "Изображения (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg",
@@ -300,10 +313,17 @@ namespace OnlineLibrary1.Pages
             try
             {
                 var bytes = File.ReadAllBytes(dlg.FileName);
-                SetAvatar(bytes);
 
-                // Сохраняем локально (без БД)
-                File.WriteAllBytes(GetAvatarPath(), bytes);
+                using (var con = new SqlConnection(_cs))
+                using (var cmd = new SqlCommand("UPDATE Users SET Avatar = @a WHERE UsersId = @id", con))
+                {
+                    cmd.Parameters.AddWithValue("@a", bytes);
+                    cmd.Parameters.AddWithValue("@id", _userId.Value);
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+
+                SetAvatar(bytes);
             }
             catch
             {

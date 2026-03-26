@@ -42,7 +42,18 @@ namespace OnlineLibrary1.Pages
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string query = "SELECT TOP (1) u.UsersId, u.Username, u.Email,  r.RoleName,  u.Created FROM dbo.Users AS u Join dbo.AuthUsers as au on u.UsersId=au.AuthUsersId join dbo.Roles as r  on u.UsersId=r.RolesId WHERE au.Email = @login  AND [Password] = HASHBYTES('SHA2_256', @password);";
+                string query = @"
+                        SELECT TOP (1)
+                            u.UsersId,
+                            u.Username,
+                            u.Email,
+                            r.RoleName,
+                            u.Created
+                        FROM dbo.Users u
+                        JOIN dbo.AuthUsers au ON u.UsersId = au.AuthUsersId
+                        JOIN dbo.Roles r ON u.RolesId = r.RolesId
+                        WHERE au.Email = @login
+                          AND au.[Password] = HASHBYTES('SHA2_256', @password);";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@login", login);

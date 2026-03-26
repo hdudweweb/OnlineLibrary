@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using OnlineLibrary1.Models;
 
 namespace OnlineLibrary1.Pages
 {
@@ -40,6 +41,13 @@ namespace OnlineLibrary1.Pages
 
             LoadBookDetailsFromDb();
             CheckIfInMyBooks();
+        }
+        private string GetSelectedStatus()
+        {
+            if (ReadingNowRadio.IsChecked == true) return "Читаю";
+            if (PlannedRadio.IsChecked == true) return "В планах";
+            if (FinishedRadio.IsChecked == true) return "Прочитано";
+            return "В избранном";
         }
 
         private void LoadBookDetailsFromDb()
@@ -116,7 +124,7 @@ namespace OnlineLibrary1.Pages
                         GenreText.Text = string.IsNullOrWhiteSpace(genre) ? "—" : genre;
                         genreForIcon = genre;
 
-                        // Рейтинг — в БД поля нет, поэтому показываем «—»
+                        // Рейтинг пока не добавил нормальный 
                         RatingText.Text = "—";
 
                         AgeRatingText.Text = string.IsNullOrWhiteSpace(age) ? "—" : age;
@@ -164,7 +172,7 @@ namespace OnlineLibrary1.Pages
                 }
             }
 
-            // Фоллбек: цвет + иконка по жанру
+            
             var hash = (TitleText.Text ?? "").GetHashCode();
             var rnd = new Random(hash);
             var color = Color.FromRgb(
@@ -204,36 +212,47 @@ namespace OnlineLibrary1.Pages
 
         private void CheckIfInMyBooks()
         {
-            int currentUserId = 1; // TODO из авторизации
-
-            const string sql = @"IF NOT EXISTS (SELECT 1 FROM Favorites WHERE UserId=@u AND BookId=@b)
-            INSERT INTO Favorites(UserId, BookId) VALUES(@u, @b);";
-
-            using (var conn = new SqlConnection(connectionString))
-            using (var cmd = new SqlCommand(sql, conn))
+            if (!AppSession.IsAuthenticated || !AppSession.UserId.HasValue)
             {
-                cmd.Parameters.AddWithValue("@u", currentUserId);
-                cmd.Parameters.AddWithValue("@b", bookId);
-                conn.Open();
-                cmd.ExecuteNonQuery();
+                isInMyBooks = false;
+                currentStatus = "";
+                BookStatusPanel.Visibility = Visibility.Collapsed;
+                return;
             }
+
+            const string sql = @"
+                         SELECT TOP 1 Status
+                         FROM Favorites
+                         WHERE UserId = @u AND BookId = @b;";
+
             try
             {
                 using (var conn = new SqlConnection(connectionString))
-                using (var cmd = new SqlCommand("SELECT COUNT(*) FROM Favorites WHERE BookId = @id", conn))
+                using (var cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@id", bookId);
-                    conn.Open();
-                    var count = Convert.ToInt32(cmd.ExecuteScalar());
+                    cmd.Parameters.AddWithValue("@u", AppSession.UserId.Value);
+                    cmd.Parameters.AddWithValue("@b", bookId);
 
-                    isInMyBooks = count > 0;
-                    currentStatus = isInMyBooks ? "В избранном" : "";
+                    conn.Open();
+                    var result = cmd.ExecuteScalar();
+
+                    if (result != null && result != DBNull.Value)
+                    {
+                        isInMyBooks = true;
+                        currentStatus = result.ToString();
+                    }
+                    else
+                    {
+                        isInMyBooks = false;
+                        currentStatus = "";
+                    }
+
                     ShowBookStatus();
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // не критично
+                MessageBox.Show($"Ошибка проверки статуса книги.\n{ex.Message}");
             }
         }
 
@@ -250,14 +269,14 @@ namespace OnlineLibrary1.Pages
             BookProgressText.Text = "";
         }
 
-        // --- UI handlers ---
+
 
         private void ReadBook_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Navigate(new ReadingPage(TitleText.Text));
+                mainWindow.MainFrame.Navigate(new ReadingPage(bookId));
             }
         }
 
@@ -275,41 +294,45 @@ namespace OnlineLibrary1.Pages
 
         private void ConfirmAddToMyBooks_Click(object sender, RoutedEventArgs e)
         {
-            // Минимальная реализация: добавляем в Favorites
+
+            if (!AppSession.IsAuthenticated || !AppSession.UserId.HasValue)
+            {
+                MessageBox.Show("Сначала войдите в аккаунт.");
+                return;
+            }
+
+            string newStatus = GetSelectedStatus();
+
+            const string sql = @"
+                            IF EXISTS (SELECT 1 FROM Favorites WHERE UserId = @u AND BookId = @b)
+                                UPDATE Favorites
+                                SET Status = @s
+                                WHERE UserId = @u AND BookId = @b;
+                            ELSE
+                                INSERT INTO Favorites(UserId, BookId, Status)
+                                VALUES(@u, @b, @s);";
+
             try
             {
                 using (var conn = new SqlConnection(connectionString))
+                using (var cmd = new SqlCommand(sql, conn))
                 {
-                    conn.Open();
+                    cmd.Parameters.AddWithValue("@u", AppSession.UserId.Value);
+                    cmd.Parameters.AddWithValue("@b", bookId);
+                    cmd.Parameters.AddWithValue("@s", newStatus);
 
-                    using (var check = new SqlCommand("SELECT COUNT(*) FROM Favorites WHERE BookId=@id", conn))
-                    {
-                        check.Parameters.AddWithValue("@id", bookId);
-                        if (Convert.ToInt32(check.ExecuteScalar()) == 0)
-                        {
-                            using (var ins = new SqlCommand("INSERT INTO Favorites(BookId) VALUES(@id)", conn))
-                            {
-                                ins.Parameters.AddWithValue("@id", bookId);
-                                ins.ExecuteNonQuery();
-                            }
-                        }
-                    }
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
                 }
 
                 isInMyBooks = true;
-
-                if (ReadingNowRadio.IsChecked == true) currentStatus = "Читаю сейчас";
-                else if (PlannedRadio.IsChecked == true) currentStatus = "В планах";
-                else if (FinishedRadio.IsChecked == true) currentStatus = "Прочитано";
-                else currentStatus = "В избранном";
-
+                currentStatus = newStatus;
                 StatusSelectionPanel.Visibility = Visibility.Collapsed;
                 ShowBookStatus();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Не удалось добавить в избранное.\n{ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Не удалось сохранить статус.\n{ex.Message}");
             }
             finally
             {
@@ -319,7 +342,7 @@ namespace OnlineLibrary1.Pages
 
         private void ChangeStatus_Click(object sender, RoutedEventArgs e)
         {
-            // Так как в БД пока нет таблицы статусов чтения, меняем только в UI
+           
             StatusSelectionPanel.Visibility = Visibility.Visible;
             AddToMyBooksButton.IsEnabled = false;
         }
@@ -353,4 +376,4 @@ namespace OnlineLibrary1.Pages
             }
         }
     }
-}
+} 

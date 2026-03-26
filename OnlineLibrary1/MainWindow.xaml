@@ -40,6 +40,10 @@
                            Content="Регистрация" 
                            Click="NavigateToRegister"
                            Margin="0,0,0,5"/>
+                    <Button x:Name="btnAdmin"
+                           Content="Админ меню"
+                           Margin="0,0,0,5"
+                           Visibility="Collapsed"/>
                     <Button x:Name="btnCatalog" 
                            Content="Каталог" 
                            Click="NavigateToCatalog"

@@ -96,7 +96,7 @@ namespace OnlineLibrary1.Pages
                 {
                     con.Open();
 
-                    // Users
+                    
                     using (var cmd = new SqlCommand(
                         "UPDATE Users SET Username = @u, Email = @e WHERE UsersId = @id", con))
                     {
@@ -106,7 +106,7 @@ namespace OnlineLibrary1.Pages
                         cmd.ExecuteNonQuery();
                     }
 
-                    // AuthUsers (Email для входа)
+                    
                     using (var cmd2 = new SqlCommand(
                         "UPDATE AuthUsers SET Email = @e WHERE AuthUsersId = @id", con))
                     {
@@ -116,7 +116,7 @@ namespace OnlineLibrary1.Pages
                     }
                 }
 
-                // Обновим сессию
+               
                 AppSession.SignIn(
                     AppSession.UserId.Value,
                     newUsername,
