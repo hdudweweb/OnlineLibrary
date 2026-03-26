@@ -31,10 +31,10 @@
                     <TextBox x:Name="EmailBox" Margin="0,0,0,10"/>
 
                     <TextBlock Text="Пароль" Margin="0,0,0,5"/>
-                    <PasswordBox x:Name="PasswordBox" Margin="0,0,0,10"/>
+                    <PasswordBox  x:Name="PasswordBox" Margin="0,0,0,10" Height="28"/>
 
                     <TextBlock Text="Повторите пароль" Margin="0,0,0,5"/>
-                    <PasswordBox x:Name="ConfirmPasswordBox" Margin="0,0,0,20"/>
+                    <PasswordBox x:Name="ConfirmPasswordBox" Margin="0,0,0,20" Height="28"/>
 
                     <CheckBox x:Name="AgreementCheckBox" 
                              Content="Я согласен с условиями использования"

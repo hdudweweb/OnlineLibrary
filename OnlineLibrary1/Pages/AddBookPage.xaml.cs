@@ -25,11 +25,11 @@ namespace OnlineLibrary1.Pages
     public partial class AddBookPage : Page
     {
         private readonly string connectionString =
-            ConfigurationManager.ConnectionStrings["bibleoteka"].ConnectionString;
+             ConfigurationManager.ConnectionStrings["bibleoteka"].ConnectionString;
 
-        private byte[] _coverBytes;          
-        private byte[] _bookFileBytes;       
-        private string _bookFilePath;        
+        private byte[] _coverBytes;
+        private byte[] _bookFileBytes;
+        private string _bookFilePath;
 
         public AddBookPage()
         {
@@ -62,7 +62,7 @@ namespace OnlineLibrary1.Pages
                         CONCAT(LastName, ' ', FirstName, ' ', ISNULL(NULLIF(MidleName, ''), ''))
                     )) AS FullName
                 FROM Author
-                ORDER BY LastName, FirstName";
+                ORDER BY LastName, FirstName, MidleName";
 
             var dt = LoadDataTable(sql);
             AuthorComboBox.ItemsSource = dt.DefaultView;
@@ -92,7 +92,6 @@ namespace OnlineLibrary1.Pages
 
         private void LoadLanguages()
         {
-            
             const string sql = @"
                 SELECT DISTINCT NameLang
                 FROM Languages
@@ -130,7 +129,6 @@ namespace OnlineLibrary1.Pages
             {
                 var bytes = File.ReadAllBytes(openFileDialog.FileName);
 
-                
                 if (bytes.Length > 5 * 1024 * 1024)
                 {
                     MessageBox.Show("Файл обложки слишком большой (макс 5MB).");
@@ -138,10 +136,11 @@ namespace OnlineLibrary1.Pages
                 }
 
                 _coverBytes = bytes;
-                ShowCoverPreview(bytes);    
+                ShowCoverPreview(bytes);
                 MessageBox.Show($"Обложка выбрана: {System.IO.Path.GetFileName(openFileDialog.FileName)}");
             }
         }
+
         private void ShowCoverPreview(byte[] bytes)
         {
             if (bytes == null || bytes.Length == 0)
@@ -166,7 +165,6 @@ namespace OnlineLibrary1.Pages
         {
             var openFileDialog = new OpenFileDialog
             {
-               
                 Filter = "Book files (*.txt;*.pdf;*.fb2)|*.txt;*.pdf;*.fb2|All files (*.*)|*.*",
                 Title = "Выберите файл с текстом книги"
             };
@@ -176,24 +174,77 @@ namespace OnlineLibrary1.Pages
                 _bookFilePath = openFileDialog.FileName;
                 _bookFileBytes = File.ReadAllBytes(openFileDialog.FileName);
 
-                
                 BookContentTextBox.Visibility = Visibility.Collapsed;
-                MessageBox.Show($"Файл книги выбран: {System.IO.Path.GetFileName(openFileDialog.FileName)}");
+                MessageBox.Show("Обложка успешно выбрана или заменена.");
             }
         }
+        private void ChangeCover_Click(object sender, RoutedEventArgs e)
+        {
+            UploadCover_Click(sender, e);
+        }
+        private void RemoveCover_Click(object sender, RoutedEventArgs e)
+        {
+            _coverBytes = null;
+            CoverPreviewImage.Source = null;
+            CoverPreviewImage.Visibility = Visibility.Collapsed;
+            CoverPlaceholderPanel.Visibility = Visibility.Visible;
 
+            MessageBox.Show("Обложка удалена.");
+        }
         private void ManualInput_Click(object sender, RoutedEventArgs e)
         {
             BookContentTextBox.Visibility = Visibility.Visible;
-
-            
             _bookFilePath = null;
             _bookFileBytes = null;
         }
 
+        private void AddAuthor_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int authorId = GetOrCreateAuthorId();
+                MessageBox.Show("Автор добавлен или выбран.");
+                LoadAuthors();
+                AuthorComboBox.SelectedValue = authorId;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка автора: {ex.Message}");
+            }
+        }
+
+        private void AddGenre_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int genreId = GetOrCreateGenreId();
+                MessageBox.Show("Жанр добавлен или выбран.");
+                LoadGenres();
+                GenreComboBox.SelectedValue = genreId;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка жанра: {ex.Message}");
+            }
+        }
+
+        private void AddLanguage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string lang = GetOrCreateLanguageName();
+                MessageBox.Show("Язык добавлен или выбран.");
+                LoadLanguages();
+                LanguageComboBox.Text = lang;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка языка: {ex.Message}");
+            }
+        }
+
         private void SaveBook_Click(object sender, RoutedEventArgs e)
         {
-            
             var title = (TitleTextBox.Text ?? "").Trim();
             if (string.IsNullOrWhiteSpace(title))
             {
@@ -213,19 +264,18 @@ namespace OnlineLibrary1.Pages
                 return;
             }
 
-            if (GenreComboBox.SelectedValue == null)
-            {
-                MessageBox.Show("Выберите жанр!");
-                return;
-            }
-
             var isbn = (IsbnTextBox.Text ?? "").Trim();
             var description = (DescriptionTextBox.Text ?? "").Trim();
+            var publisher = (PublisherTextBox.Text ?? "").Trim();
 
-            int? ageId = AgeComboBox.SelectedValue as int?;
-            int genreId = Convert.ToInt32(GenreComboBox.SelectedValue);
+            int? ageId = AgeComboBox.SelectedValue == null
+                ? (int?)null
+                : Convert.ToInt32(AgeComboBox.SelectedValue);
 
             int authorId;
+            int genreId;
+            string language = null;
+
             try
             {
                 authorId = GetOrCreateAuthorId();
@@ -236,23 +286,32 @@ namespace OnlineLibrary1.Pages
                 return;
             }
 
+            try
+            {
+                genreId = GetOrCreateGenreId();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка жанра: {ex.Message}");
+                return;
+            }
+
+            try
+            {
+                language = GetOrCreateLanguageName(allowEmpty: true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка языка: {ex.Message}");
+                return;
+            }
+
             byte[] bookBytes = _bookFileBytes;
             if (bookBytes == null && BookContentTextBox.Visibility == Visibility.Visible)
             {
                 var manualText = (BookContentTextBox.Text ?? "").Trim();
                 if (!string.IsNullOrWhiteSpace(manualText))
                     bookBytes = Encoding.UTF8.GetBytes(manualText);
-            }
-
-            var publisher = (PublisherTextBox.Text ?? "").Trim();
-
-            string language = null;
-            if (LanguageComboBox.SelectedValue != null)
-            {
-                if (LanguageComboBox.SelectedValue is string s)
-                    language = s;
-                else
-                    language = Convert.ToString(LanguageComboBox.SelectedValue);
             }
 
             using (var conn = new SqlConnection(connectionString))
@@ -271,27 +330,20 @@ namespace OnlineLibrary1.Pages
                             descriptionBook: description,
                             fb2File: bookBytes,
                             ageId: ageId,
-                            chapterId: null,   
+                            chapterId: null,
                             authorId: authorId
                         );
 
                         InsertGenreBook(conn, tx, bookId, genreId);
 
                         if (_coverBytes != null && _coverBytes.Length > 0)
-                        {
                             InsertCover(conn, tx, bookId, _coverBytes);
-                        }
 
                         if (!string.IsNullOrWhiteSpace(language))
-                        {
                             InsertLanguageForBook(conn, tx, bookId, language);
-                        }
 
-                        
                         if (!string.IsNullOrWhiteSpace(publisher))
-                        {
                             InsertPublishingHouseForBook(conn, tx, bookId, publisher);
-                        }
 
                         tx.Commit();
 
@@ -318,11 +370,11 @@ namespace OnlineLibrary1.Pages
 
             var raw = (AuthorComboBox.Text ?? "").Trim();
             if (string.IsNullOrWhiteSpace(raw))
-                throw new InvalidOperationException("Укажите автора (выберите из списка или введите вручную).");
+                throw new InvalidOperationException("Укажите автора.");
 
             var parts = raw.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length < 2)
-                throw new InvalidOperationException("Введите автора в формате: Фамилия Имя (Отчество).");
+                throw new InvalidOperationException("Введите автора в формате: Фамилия Имя Отчество.");
 
             var lastName = parts[0];
             var firstName = parts[1];
@@ -333,9 +385,11 @@ namespace OnlineLibrary1.Pages
                 conn.Open();
 
                 using (var find = new SqlCommand(@"
-            SELECT TOP 1 AuthorId
-            FROM Author
-            WHERE LastName = @ln AND FirstName = @fn AND ISNULL(MidleName,'') = ISNULL(@mn,'')", conn))
+                    SELECT TOP 1 AuthorId
+                    FROM Author
+                    WHERE LastName = @ln
+                      AND FirstName = @fn
+                      AND ISNULL(MidleName,'') = ISNULL(@mn,'')", conn))
                 {
                     find.Parameters.AddWithValue("@ln", lastName);
                     find.Parameters.AddWithValue("@fn", firstName);
@@ -347,9 +401,9 @@ namespace OnlineLibrary1.Pages
                 }
 
                 using (var ins = new SqlCommand(@"
-            INSERT INTO Author(LastName, FirstName, MidleName)
-            OUTPUT INSERTED.AuthorId
-            VALUES (@ln, @fn, @mn)", conn))
+                    INSERT INTO Author(LastName, FirstName, MidleName)
+                    OUTPUT INSERTED.AuthorId
+                    VALUES (@ln, @fn, @mn)", conn))
                 {
                     ins.Parameters.AddWithValue("@ln", lastName);
                     ins.Parameters.AddWithValue("@fn", firstName);
@@ -359,11 +413,90 @@ namespace OnlineLibrary1.Pages
                     if (newId == null)
                         throw new Exception("Не удалось добавить автора.");
 
-                    LoadAuthors();
-                    AuthorComboBox.SelectedValue = Convert.ToInt32(newId);
+                    return Convert.ToInt32(newId);
+                }
+            }
+        }
+
+        private int GetOrCreateGenreId()
+        {
+            if (GenreComboBox.SelectedValue != null)
+                return Convert.ToInt32(GenreComboBox.SelectedValue);
+
+            var genreName = (GenreComboBox.Text ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(genreName))
+                throw new InvalidOperationException("Укажите жанр.");
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (var find = new SqlCommand(@"
+                    SELECT TOP 1 GenreId
+                    FROM Genre
+                    WHERE LTRIM(RTRIM(GenreName)) = LTRIM(RTRIM(@name))", conn))
+                {
+                    find.Parameters.AddWithValue("@name", genreName);
+                    var found = find.ExecuteScalar();
+
+                    if (found != null && found != DBNull.Value)
+                        return Convert.ToInt32(found);
+                }
+
+                using (var ins = new SqlCommand(@"
+                    INSERT INTO Genre(GenreName)
+                    OUTPUT INSERTED.GenreId
+                    VALUES (@name)", conn))
+                {
+                    ins.Parameters.AddWithValue("@name", genreName);
+
+                    var newId = ins.ExecuteScalar();
+                    if (newId == null)
+                        throw new Exception("Не удалось добавить жанр.");
 
                     return Convert.ToInt32(newId);
                 }
+            }
+        }
+
+        private string GetOrCreateLanguageName(bool allowEmpty = false)
+        {
+            var lang = (LanguageComboBox.Text ?? "").Trim();
+
+            if (string.IsNullOrWhiteSpace(lang))
+            {
+                if (allowEmpty)
+                    return null;
+
+                throw new InvalidOperationException("Укажите язык.");
+            }
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (var find = new SqlCommand(@"
+                    SELECT TOP 1 NameLang
+                    FROM Languages
+                    WHERE LTRIM(RTRIM(NameLang)) = LTRIM(RTRIM(@name))", conn))
+                {
+                    find.Parameters.AddWithValue("@name", lang);
+                    var found = find.ExecuteScalar();
+
+                    if (found != null && found != DBNull.Value)
+                        return Convert.ToString(found);
+                }
+
+                // сохраняем новый язык как отдельную строку-справочник с NULL BookId
+                using (var ins = new SqlCommand(@"
+                    INSERT INTO Languages(NameLang, BookId)
+                    VALUES (@name, NULL)", conn))
+                {
+                    ins.Parameters.AddWithValue("@name", lang);
+                    ins.ExecuteNonQuery();
+                }
+
+                return lang;
             }
         }
 
@@ -391,8 +524,8 @@ namespace OnlineLibrary1.Pages
                 cmd.Parameters.AddWithValue("@name", title);
                 cmd.Parameters.AddWithValue("@pages", totalPages);
                 cmd.Parameters.AddWithValue("@year", publicationYear);
-                cmd.Parameters.AddWithValue("@isbn", (object)isbn ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@desc", (object)descriptionBook ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@isbn", string.IsNullOrWhiteSpace(isbn) ? (object)DBNull.Value : isbn);
+                cmd.Parameters.AddWithValue("@desc", string.IsNullOrWhiteSpace(descriptionBook) ? (object)DBNull.Value : descriptionBook);
                 cmd.Parameters.AddWithValue("@file", (object)fb2File ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@ageId", (object)ageId ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@chapterId", (object)chapterId ?? DBNull.Value);
@@ -400,7 +533,7 @@ namespace OnlineLibrary1.Pages
 
                 var bookIdObj = cmd.ExecuteScalar();
                 if (bookIdObj == null)
-                    throw new Exception("Не удалось сохранить книгу (Book).");
+                    throw new Exception("Не удалось сохранить книгу.");
 
                 return Convert.ToInt32(bookIdObj);
             }
@@ -464,6 +597,6 @@ namespace OnlineLibrary1.Pages
             mainWindow?.MainFrame.Navigate(new CatalogPage());
         }
 
-        
+
     }
 }

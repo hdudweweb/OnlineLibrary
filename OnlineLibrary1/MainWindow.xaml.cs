@@ -31,7 +31,7 @@ namespace OnlineLibrary1
 
             btnMyBooks.Visibility = auth ? Visibility.Visible : Visibility.Collapsed;
             btnProfile.Visibility = auth ? Visibility.Visible : Visibility.Collapsed;
-            btnAddBook.Visibility = isAdmin ? Visibility.Visible : Visibility.Collapsed;
+            btnAddBook.Visibility = auth ? Visibility.Visible : Visibility.Collapsed;
             btnAdmin.Visibility = isAdmin ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -86,6 +86,11 @@ namespace OnlineLibrary1
             MessageBox.Show("Вы вышли из аккаунта");
             AppSession.SignOut();
             SetAuthorized(false);
+        }
+
+        private void btnAdmin_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new AdminPage());
         }
     }
 }

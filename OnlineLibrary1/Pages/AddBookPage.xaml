@@ -19,23 +19,23 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" 
-                      Text="Добавление новой книги" 
-                      FontSize="24" 
-                      FontWeight="Bold"
-                      Margin="0,0,0,20"/>
+            <TextBlock Grid.Row="0"
+                       Text="Добавление новой книги"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Margin="0,0,0,20"/>
 
-            <Border Grid.Row="1" 
-                    BorderBrush="#ddd" 
+            <Border Grid.Row="1"
+                    BorderBrush="#ddd"
                     BorderThickness="1"
-                    CornerRadius="5" 
+                    CornerRadius="5"
                     Padding="15"
                     Margin="0,0,0,15">
                 <StackPanel>
-                    <TextBlock Text="Основная информация" 
-                              FontWeight="Bold"
-                              FontSize="16"
-                              Margin="0,0,0,10"/>
+                    <TextBlock Text="Основная информация"
+                               FontWeight="Bold"
+                               FontSize="16"
+                               Margin="0,0,0,10"/>
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -49,10 +49,27 @@
                             <TextBox x:Name="TitleTextBox"/>
 
                             <Label Content="Автор*" Margin="0,10,0,0"/>
-                            <ComboBox x:Name="AuthorComboBox" 
-                                     IsEditable="True" >
-                                
-                            </ComboBox>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="110"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ComboBox x:Name="AuthorComboBox"
+                                          Grid.Column="0"
+                                          IsEditable="True"
+                                          IsTextSearchEnabled="True"/>
+
+                                <Button Grid.Column="1"
+                                        Margin="8,0,0,0"
+                                        Content="Добавить"
+                                        Click="AddAuthor_Click"/>
+                            </Grid>
+
+                            <TextBlock Text="Можно выбрать автора из списка или ввести: Фамилия Имя Отчество"
+                                       Foreground="Gray"
+                                       FontSize="11"
+                                       Margin="0,4,0,0"/>
 
                             <Label Content="Год издания*" Margin="0,10,0,0"/>
                             <TextBox x:Name="YearTextBox"/>
@@ -66,25 +83,23 @@
                             <TextBox x:Name="PagesTextBox"/>
 
                             <Label Content="Возрастное ограничение" Margin="0,10,0,0"/>
-                            <ComboBox x:Name="AgeComboBox">
-                                
-                            </ComboBox>
+                            <ComboBox x:Name="AgeComboBox"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
             </Border>
 
-            <Border Grid.Row="2" 
-                    BorderBrush="#ddd" 
+            <Border Grid.Row="2"
+                    BorderBrush="#ddd"
                     BorderThickness="1"
-                    CornerRadius="5" 
+                    CornerRadius="5"
                     Padding="15"
                     Margin="0,0,0,15">
                 <StackPanel>
-                    <TextBlock Text="Дополнительная информация" 
-                              FontWeight="Bold"
-                              FontSize="16"
-                              Margin="0,0,0,10"/>
+                    <TextBlock Text="Дополнительная информация"
+                               FontWeight="Bold"
+                               FontSize="16"
+                               Margin="0,0,0,10"/>
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -94,12 +109,30 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0">
-                            <Label Content="Жанры*"/>
-                            <ComboBox x:Name="GenreComboBox"
-                                      DisplayMemberPath="GenreName"
-                                SelectedValuePath="GenreID"/>
+                            <Label Content="Жанр*" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="110"/>
+                                </Grid.ColumnDefinitions>
 
+                                <ComboBox x:Name="GenreComboBox"
+                                          Grid.Column="0"
+                                          IsEditable="True"
+                                          IsTextSearchEnabled="True"
+                                          DisplayMemberPath="GenreName"
+                                          SelectedValuePath="GenreId"/>
 
+                                <Button Grid.Column="1"
+                                        Margin="8,0,0,0"
+                                        Content="Добавить"
+                                        Click="AddGenre_Click"/>
+                            </Grid>
+
+                            <TextBlock Text="Можно выбрать жанр или ввести новый"
+                                       Foreground="Gray"
+                                       FontSize="11"
+                                       Margin="0,4,0,0"/>
 
                             <Label Content="Издательство" Margin="0,10,0,0"/>
                             <TextBox x:Name="PublisherTextBox"/>
@@ -107,9 +140,27 @@
 
                         <StackPanel Grid.Column="2">
                             <Label Content="Язык"/>
-                            <ComboBox x:Name="LanguageComboBox">
-                                
-                            </ComboBox>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="110"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ComboBox x:Name="LanguageComboBox"
+                                          Grid.Column="0"
+                                          IsEditable="True"
+                                          IsTextSearchEnabled="True"/>
+
+                                <Button Grid.Column="1"
+                                        Margin="8,0,0,0"
+                                        Content="Добавить"
+                                        Click="AddLanguage_Click"/>
+                            </Grid>
+
+                            <TextBlock Text="Можно выбрать язык или ввести новый"
+                                       Foreground="Gray"
+                                       FontSize="11"
+                                       Margin="0,4,0,0"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
@@ -124,61 +175,73 @@
 
                 <StackPanel Grid.Column="0">
                     <Label Content="Описание книги"/>
-                    <TextBox x:Name="DescriptionTextBox" 
-                            AcceptsReturn="True"
-                            TextWrapping="Wrap"
-                            VerticalScrollBarVisibility="Auto"
-                            Height="150"/>
+                    <TextBox x:Name="DescriptionTextBox"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             Height="150"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2">
                     <Label Content="Обложка книги"/>
-                    <Border BorderBrush="#ddd" 
+                    <Border BorderBrush="#ddd"
                             BorderThickness="1"
-                            CornerRadius="5" 
+                            CornerRadius="5"
                             Height="200"
                             Background="#f9f9f9">
                         <Grid>
                             <Image x:Name="CoverPreviewImage"
-                              Stretch="UniformToFill"
-                              Visibility="Collapsed"/>
+                                   Stretch="UniformToFill"
+                                   Visibility="Collapsed"/>
 
                             <StackPanel x:Name="CoverPlaceholderPanel"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center">
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center">
                                 <Button Content="Загрузить обложку"
-                                    Click="UploadCover_Click"
-                                    Background="#4a6fa5"
-                                    BorderBrush="#4a6fa5"
-                                    BorderThickness="1"/>
+                                        Click="UploadCover_Click"
+                                        Background="#4a6fa5"
+                                        BorderBrush="#4a6fa5"
+                                        BorderThickness="1"/>
                                 <TextBlock Text="JPG, PNG до 5MB"
-                                    Foreground="Gray"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,10,0,0"/>
+                                           Foreground="Gray"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,10,0,0"/>
                             </StackPanel>
                         </Grid>
                     </Border>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="Изменить обложку"
+                                Width="120"
+                                Click="ChangeCover_Click"
+                                Margin="0,0,8,0"/>
+
+                                        <Button Content="Удалить"
+                                Width="80"
+                                Background="#e74c3c"
+                                Foreground="White"
+                                Click="RemoveCover_Click"/>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
 
-            <Border Grid.Row="4" 
-                    BorderBrush="#ddd" 
+            <Border Grid.Row="4"
+                    BorderBrush="#ddd"
                     BorderThickness="1"
-                    CornerRadius="5" 
+                    CornerRadius="5"
                     Padding="15"
                     Margin="0,0,0,15">
                 <StackPanel>
-                    <TextBlock Text="Текст книги" 
-                              FontWeight="Bold"
-                              FontSize="16"
-                              Margin="0,0,0,10"/>
+                    <TextBlock Text="Текст книги"
+                               FontWeight="Bold"
+                               FontSize="16"
+                               Margin="0,0,0,10"/>
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                         <Button Content="Загрузить файл (TXT, PDF)"
                                 Click="UploadBookFile_Click"/>
-                        <TextBlock Text="или" 
-                                  VerticalAlignment="Center"
-                                  Margin="10,0"/>
+                        <TextBlock Text="или"
+                                   VerticalAlignment="Center"
+                                   Margin="10,0"/>
                         <Button Content="Ввести вручную"
                                 Click="ManualInput_Click"
                                 Background="#4a6fa5"
@@ -186,28 +249,28 @@
                                 BorderThickness="1"/>
                     </StackPanel>
 
-                    <TextBox x:Name="BookContentTextBox" 
-                            Visibility="Collapsed"
-                            AcceptsReturn="True"
-                            TextWrapping="Wrap"
-                            VerticalScrollBarVisibility="Auto"
-                            Height="200"/>
+                    <TextBox x:Name="BookContentTextBox"
+                             Visibility="Collapsed"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             Height="200"/>
                 </StackPanel>
             </Border>
 
-            <StackPanel Grid.Row="5" 
-                       Orientation="Horizontal" 
-                       HorizontalAlignment="Center">
-                <Button Content="Сохранить книгу" 
+            <StackPanel Grid.Row="5"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <Button Content="Сохранить книгу"
                         Click="SaveBook_Click"
                         Width="150"
                         Margin="0,0,10,0"/>
-                <Button Content="Отмена" 
+                <Button Content="Отмена"
                         Click="Cancel_Click"
                         Width="150"
                         Background="#e74c3c"/>
             </StackPanel>
-            
+
         </Grid>
     </ScrollViewer>
 </Page>
