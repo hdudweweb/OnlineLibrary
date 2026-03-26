@@ -138,7 +138,27 @@ namespace OnlineLibrary1.Pages
                 }
 
                 _coverBytes = bytes;
+                ShowCoverPreview(bytes);    
                 MessageBox.Show($"Обложка выбрана: {System.IO.Path.GetFileName(openFileDialog.FileName)}");
+            }
+        }
+        private void ShowCoverPreview(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length == 0)
+                return;
+
+            using (var ms = new MemoryStream(bytes))
+            {
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.StreamSource = ms;
+                image.EndInit();
+                image.Freeze();
+
+                CoverPreviewImage.Source = image;
+                CoverPreviewImage.Visibility = Visibility.Visible;
+                CoverPlaceholderPanel.Visibility = Visibility.Collapsed;
             }
         }
 

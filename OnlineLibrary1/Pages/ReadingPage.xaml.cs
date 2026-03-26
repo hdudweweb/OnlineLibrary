@@ -30,7 +30,7 @@ namespace OnlineLibrary1.Pages
         private List<string> pages = new List<string>();
         private int currentPage = 1;
 
-        public ReadingPage(string bookTitle)
+        public ReadingPage(int bookId)
         {
             InitializeComponent();
             this.bookId = bookId;
