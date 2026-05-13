@@ -194,7 +194,8 @@
 
                                             <TextBlock Text="{Binding Meta}"
                                                    Margin="0,8,0,0"
-                                                   Foreground="#637081"/>
+                                                   Foreground="#637081"
+                                                   TextWrapping="Wrap"/>
 
                                             <TextBlock Text="{Binding DescriptionShort}"
                                                    Margin="0,8,0,0"

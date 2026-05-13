@@ -60,23 +60,32 @@ namespace OnlineLibrary1.Pages
         {
             try
             {
-                const string sql = @"
+const string sql = @"
 SELECT
     b.BookId,
     b.[Name] AS Title,
     LTRIM(RTRIM(CONCAT(a.LastName, ' ', a.FirstName, ' ', ISNULL(NULLIF(a.MidleName,''), '')))) AS Author,
     ISNULL(b.PublicationYear, 0) AS [Year],
-    ISNULL(g.GenreName, N'') AS Genre,
+    ISNULL(genres.GenreList, N'') AS Genre,
     ISNULL(ag.AgeName, N'') AS AgeRating,
     ISNULL(b.ISBN, N'') AS ISBN,
     ISNULL(b.TotalPages, 0) AS Pages,
     ISNULL(b.DescriptionBook, N'') AS [Description],
-    c.CoverBytes
+    c.CoverBytes,
+    (SELECT COUNT(*) FROM Favorites f WHERE f.BookId = b.BookId) AS FavoritesCount
 FROM Book b
 INNER JOIN Author a ON a.AuthorId = b.AuthorId
 LEFT JOIN Age ag ON ag.AgeId = b.AgeId
-LEFT JOIN GenreBook gb ON gb.BookId = b.BookId
-LEFT JOIN Genre g ON g.GenreId = gb.GenreId
+OUTER APPLY (
+    SELECT STUFF((
+        SELECT N', ' + g2.GenreName
+        FROM GenreBook gb2
+        INNER JOIN Genre g2 ON g2.GenreId = gb2.GenreId
+        WHERE gb2.BookId = b.BookId
+        ORDER BY g2.GenreName
+        FOR XML PATH(''), TYPE
+    ).value('.', 'nvarchar(max)'), 1, 2, N'') AS GenreList
+) genres
 OUTER APPLY (
     SELECT TOP 1 Cover AS CoverBytes
     FROM Covers
@@ -107,6 +116,7 @@ ORDER BY b.[Name];";
                                 Pages = Convert.ToInt32(r["Pages"]),
                                 Description = r["Description"]?.ToString() ?? "",
                                 CoverBytes = r["CoverBytes"] == DBNull.Value ? null : (byte[])r["CoverBytes"],
+                                FavoritesCount = Convert.ToInt32(r["FavoritesCount"]),
                             });
                         }
                     }
@@ -282,8 +292,7 @@ ORDER BY b.[Name];";
             var coverGrid = new Grid();
             coverGrid.Children.Add(bookIcon);
 
-            // Рейтинга пока нет 
-            var ratingBorder = new Border
+            var popularityBorder = new Border
             {
                 Background = new SolidColorBrush(Color.FromArgb(220, 255, 255, 255)),
                 CornerRadius = new CornerRadius(3),
@@ -293,25 +302,25 @@ ORDER BY b.[Name];";
                 Padding = new Thickness(3, 1, 3, 1)
             };
 
-            var ratingStack = new StackPanel { Orientation = Orientation.Horizontal };
-            ratingStack.Children.Add(new TextBlock
+            var popularityStack = new StackPanel { Orientation = Orientation.Horizontal };
+            popularityStack.Children.Add(new TextBlock
             {
-                Text = "★",
-                Foreground = Brushes.Gold,
+                Text = "♥",
+                Foreground = new SolidColorBrush(Color.FromRgb(192, 57, 43)),
                 FontSize = 10,
                 VerticalAlignment = VerticalAlignment.Center
             });
-            ratingStack.Children.Add(new TextBlock
+            popularityStack.Children.Add(new TextBlock
             {
-                Text = "—",
+                Text = book.FavoritesCount.ToString(),
                 FontSize = 10,
                 FontWeight = FontWeights.Bold,
                 Margin = new Thickness(2, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center
             });
 
-            ratingBorder.Child = ratingStack;
-            coverGrid.Children.Add(ratingBorder);
+            popularityBorder.Child = popularityStack;
+            coverGrid.Children.Add(popularityBorder);
 
             coverBorder.Child = coverGrid;
             stackPanel.Children.Add(coverBorder);
@@ -346,10 +355,11 @@ ORDER BY b.[Name];";
 
             var yearGenreText = new TextBlock
             {
-                Text = $"{book.Year} • {book.Genre}",
+                Text = string.IsNullOrWhiteSpace(book.Genre) ? book.Year.ToString() : $"{book.Year} • {book.Genre}",
                 FontSize = 11,
                 Foreground = Brushes.Gray,
-                VerticalAlignment = VerticalAlignment.Center
+                VerticalAlignment = VerticalAlignment.Center,
+                TextWrapping = TextWrapping.Wrap
             };
             Grid.SetColumn(yearGenreText, 0);
 
@@ -504,7 +514,7 @@ ORDER BY b.[Name];";
                         var selectedGenre = genreItem.Content?.ToString() ?? "";
                         if (!string.IsNullOrEmpty(selectedGenre) && selectedGenre != "Все жанры")
                         {
-                            if (!string.Equals(book.Genre, selectedGenre, StringComparison.OrdinalIgnoreCase))
+                            if ((book.Genre ?? "").IndexOf(selectedGenre, StringComparison.OrdinalIgnoreCase) < 0)
                                 matchesFilters = false;
                         }
                     }

@@ -86,6 +86,7 @@ namespace OnlineLibrary1
             MessageBox.Show("Вы вышли из аккаунта");
             AppSession.SignOut();
             SetAuthorized(false);
+            MainFrame.Navigate(new CatalogPage());
         }
 
         private void btnAdmin_Click(object sender, RoutedEventArgs e)

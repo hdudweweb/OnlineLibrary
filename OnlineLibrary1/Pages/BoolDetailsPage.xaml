@@ -45,7 +45,7 @@
                                   Opacity="0.8"/>
                     </Border>
 
-                    <!-- Рейтинг -->
+                    <!-- Популярность -->
                     <Border Background="#4a6fa5"
                             CornerRadius="3"
                             HorizontalAlignment="Left"
@@ -53,12 +53,12 @@
                             Margin="10"
                             Padding="5,2">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="★" 
-                                      Foreground="Gold"
+                            <TextBlock Text="♥" 
+                                      Foreground="#ffcad4"
                                       FontWeight="Bold"
                                       VerticalAlignment="Center"/>
                             <TextBlock x:Name="RatingText" 
-                                      Text="4.8" 
+                                      Text="0" 
                                       Foreground="White"
                                       FontWeight="Bold"
                                       Margin="2,0,0,0"
@@ -108,8 +108,8 @@
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="0"/>
                     </Grid.ColumnDefinitions>
 
                     <!-- Год -->
@@ -132,14 +132,15 @@
                                   FontWeight="SemiBold"/>
                     </StackPanel>
 
-                    <!-- Жанр -->
+                    <!-- Жанры -->
                     <StackPanel Grid.Column="4">
-                        <TextBlock Text="Жанр" 
+                        <TextBlock Text="Жанры" 
                                   FontSize="12"
                                   Foreground="Gray"/>
                         <TextBlock x:Name="GenreText" 
                                   FontSize="16"
-                                  FontWeight="SemiBold"/>
+                                  FontWeight="SemiBold"
+                                  TextWrapping="Wrap"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -324,11 +325,12 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Язык:" 
+                            <TextBlock Text="Языки:" 
                                       FontWeight="SemiBold"
                                       Margin="0,0,0,5"/>
                             <TextBlock x:Name="LanguageText" 
-                                      Margin="0,0,0,15"/>
+                                       Margin="0,0,0,15"
+                                       TextWrapping="Wrap"/>
 
                             <TextBlock Text="Серия:" 
                                       FontWeight="SemiBold"

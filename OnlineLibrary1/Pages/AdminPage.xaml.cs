@@ -91,11 +91,19 @@ namespace OnlineLibrary1.Pages
                                         b.[Name] AS Title,
                                         LTRIM(RTRIM(CONCAT(a.LastName, ' ', a.FirstName, ' ', ISNULL(NULLIF(a.MidleName,''), '')))) AS Author,
                                         ISNULL(b.PublicationYear, 0) AS [Year],
-                                        ISNULL(g.GenreName, N'') AS Genre
+                                        ISNULL(genres.GenreList, N'') AS Genre
                                     FROM Book b
                                     INNER JOIN Author a ON a.AuthorId = b.AuthorId
-                                    LEFT JOIN GenreBook gb ON gb.BookId = b.BookId
-                                    LEFT JOIN Genre g ON g.GenreId = gb.GenreId
+                                    OUTER APPLY (
+                                        SELECT STUFF((
+                                            SELECT N', ' + g2.GenreName
+                                            FROM GenreBook gb2
+                                            INNER JOIN Genre g2 ON g2.GenreId = gb2.GenreId
+                                            WHERE gb2.BookId = b.BookId
+                                            ORDER BY g2.GenreName
+                                            FOR XML PATH(''), TYPE
+                                        ).value('.', 'nvarchar(max)'), 1, 2, N'') AS GenreList
+                                    ) genres
                                     ORDER BY b.BookId DESC;";
 
                 var list = new List<BookItem>();

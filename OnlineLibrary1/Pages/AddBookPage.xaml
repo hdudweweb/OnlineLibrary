@@ -109,7 +109,7 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0">
-                            <Label Content="Жанр*" />
+                            <Label Content="Жанры*" />
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -129,17 +129,26 @@
                                         Click="AddGenre_Click"/>
                             </Grid>
 
-                            <TextBlock Text="Можно выбрать жанр или ввести новый"
+                            <TextBlock Text="Можно выбрать жанр из списка или ввести новый и нажать «Добавить»"
                                        Foreground="Gray"
                                        FontSize="11"
                                        Margin="0,4,0,0"/>
+
+                            <ListBox x:Name="SelectedGenresListBox"
+                                     Height="90"
+                                     Margin="0,8,0,0"/>
+
+                            <Button Content="Убрать выбранный"
+                                    Margin="0,8,0,0"
+                                    HorizontalAlignment="Left"
+                                    Click="RemoveGenre_Click"/>
 
                             <Label Content="Издательство" Margin="0,10,0,0"/>
                             <TextBox x:Name="PublisherTextBox"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
-                            <Label Content="Язык"/>
+                            <Label Content="Языки"/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -157,10 +166,19 @@
                                         Click="AddLanguage_Click"/>
                             </Grid>
 
-                            <TextBlock Text="Можно выбрать язык или ввести новый"
+                            <TextBlock Text="Можно выбрать язык из списка или ввести новый и нажать «Добавить»"
                                        Foreground="Gray"
                                        FontSize="11"
                                        Margin="0,4,0,0"/>
+
+                            <ListBox x:Name="SelectedLanguagesListBox"
+                                     Height="90"
+                                     Margin="0,8,0,0"/>
+
+                            <Button Content="Убрать выбранный"
+                                    Margin="0,8,0,0"
+                                    HorizontalAlignment="Left"
+                                    Click="RemoveLanguage_Click"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>

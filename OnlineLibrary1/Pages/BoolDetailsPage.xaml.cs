@@ -57,25 +57,38 @@ namespace OnlineLibrary1.Pages
                 const string sql = @"SELECT b.BookId, b.[Name] AS Title, LTRIM(RTRIM(CONCAT(a.LastName, ' ', a.FirstName, ' ', ISNULL(NULLIF(a.MidleName,''), '')))) AS Author,
                         ISNULL(b.PublicationYear, 0) AS [Year],
                         ISNULL(b.TotalPages, 0) AS Pages,
-                        ISNULL(g.GenreName, N'') AS Genre,
+                        ISNULL(genres.GenreList, N'') AS Genre,
                         ISNULL(ag.AgeName, N'') AS AgeRating,
                         ISNULL(b.ISBN, N'') AS ISBN,
                         ISNULL(b.DescriptionBook, N'') AS [Description],
-                        lang.NameLang AS [Language],
+                        languages.LanguageList AS [Language],
                         pub.NamePublish AS Publisher,
                         c.CoverBytes,
                         (SELECT COUNT(*) FROM Favorites f WHERE f.BookId = b.BookId) AS FavoritesCount
                     FROM Book b
                     INNER JOIN Author a ON a.AuthorId = b.AuthorId
                     LEFT JOIN Age ag ON ag.AgeId = b.AgeId
-                    LEFT JOIN GenreBook gb ON gb.BookId = b.BookId
-                    LEFT JOIN Genre g ON g.GenreId = gb.GenreId
                     OUTER APPLY (
-                        SELECT TOP 1 NameLang
-                        FROM Languages
-                        WHERE BookId = b.BookId
-                        ORDER BY LanguagesId DESC
-                    ) lang
+                        SELECT STUFF((
+                            SELECT N', ' + g2.GenreName
+                            FROM GenreBook gb2
+                            INNER JOIN Genre g2 ON g2.GenreId = gb2.GenreId
+                            WHERE gb2.BookId = b.BookId
+                            ORDER BY g2.GenreName
+                            FOR XML PATH(''), TYPE
+                        ).value('.', 'nvarchar(max)'), 1, 2, N'') AS GenreList
+                    ) genres
+                    OUTER APPLY (
+                        SELECT STUFF((
+                            SELECT N', ' + l2.NameLang
+                            FROM Languages l2
+                            WHERE l2.BookId = b.BookId
+                              AND l2.NameLang IS NOT NULL
+                              AND LTRIM(RTRIM(l2.NameLang)) <> ''
+                            ORDER BY l2.NameLang
+                            FOR XML PATH(''), TYPE
+                        ).value('.', 'nvarchar(max)'), 1, 2, N'') AS LanguageList
+                    ) languages
                     OUTER APPLY (
                         SELECT TOP 1 NamePublish
                         FROM PublishingHouse
@@ -124,8 +137,7 @@ namespace OnlineLibrary1.Pages
                         GenreText.Text = string.IsNullOrWhiteSpace(genre) ? "—" : genre;
                         genreForIcon = genre;
 
-                        // Рейтинг пока не добавил нормальный 
-                        RatingText.Text = "—";
+                        RatingText.Text = FormatPopularityBadge(favCount);
 
                         AgeRatingText.Text = string.IsNullOrWhiteSpace(age) ? "—" : age;
                         AgeRatingBorder.Background = GetAgeColor(age);
@@ -157,6 +169,11 @@ namespace OnlineLibrary1.Pages
             if (favoritesCount >= 20) return "Высокая ★★★★☆";
             if (favoritesCount >= 5) return "Средняя ★★★☆☆";
             return "Низкая ★★☆☆☆";
+        }
+
+        private string FormatPopularityBadge(int favoritesCount)
+        {
+            return favoritesCount.ToString();
         }
 
         private void SetupBookCover()

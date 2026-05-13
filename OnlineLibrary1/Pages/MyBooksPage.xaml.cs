@@ -57,7 +57,7 @@ namespace OnlineLibrary1.Pages
                         b.[Name] AS Title,
                         LTRIM(RTRIM(CONCAT(a.LastName, ' ', a.FirstName, ' ', ISNULL(NULLIF(a.MidleName,''), '')))) AS Author,
                         ISNULL(b.PublicationYear, 0) AS [Year],
-                        ISNULL(g.GenreName, N'') AS Genre,
+                        ISNULL(genres.GenreList, N'') AS Genre,
                         ISNULL(b.TotalPages, 0) AS Pages,
                         ISNULL(b.DescriptionBook, N'') AS [Description],
                         f.Status,
@@ -65,8 +65,16 @@ namespace OnlineLibrary1.Pages
                     FROM Favorites f
                     INNER JOIN Book b ON b.BookId = f.BookId
                     INNER JOIN Author a ON a.AuthorId = b.AuthorId
-                    LEFT JOIN GenreBook gb ON gb.BookId = b.BookId
-                    LEFT JOIN Genre g ON g.GenreId = gb.GenreId
+                    OUTER APPLY (
+                        SELECT STUFF((
+                            SELECT N', ' + g2.GenreName
+                            FROM GenreBook gb2
+                            INNER JOIN Genre g2 ON g2.GenreId = gb2.GenreId
+                            WHERE gb2.BookId = b.BookId
+                            ORDER BY g2.GenreName
+                            FOR XML PATH(''), TYPE
+                        ).value('.', 'nvarchar(max)'), 1, 2, N'') AS GenreList
+                    ) genres
                     OUTER APPLY (
                         SELECT TOP 1 Cover AS CoverBytes
                         FROM Covers
