@@ -59,18 +59,10 @@
 
                             <Button
                                 Content="Очистить"
+                                Style="{StaticResource SearchSurfaceButtonStyle}"
                                 Padding="10,6"
                                 Click="ClearSearch_Click"
-                                Background="#4A6FA5"
-                                Foreground="White"
-                                Cursor="Hand" Grid.ColumnSpan="2" Margin="221,0,0,0">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}" >
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Button.Template>
+                                Grid.ColumnSpan="2" Margin="221,0,0,0">
                             </Button>
                             
                         </Grid>
@@ -80,34 +72,18 @@
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,12,0,12">
                 <Button Content="Обновить"
+                    Style="{StaticResource SuccessButtonStyle}"
                     Click="Refresh_Click"
                     Padding="12,6"
-                    Background="#2E8B57"
-                    Foreground="White"
-                    Cursor="Hand" Width="90">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" >
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
+                    Width="90">
                 </Button>
 
                 <Button Content="Очистить мои книги"
+                    Style="{StaticResource DangerButtonStyle}"
                     Margin="10,0,0,0"
                     Click="ClearFavorites_Click"
                     Padding="12,6"
-                    Background="#E74C3C"
-                    Foreground="White"
-                    Cursor="Hand" Width="140">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" >
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
+                    Width="140">
                 </Button>
                 <ComboBox x:Name="StatusFilterComboBox"
           Width="180"
@@ -201,35 +177,14 @@
                                                 Cursor="Hand"
                                                 Click="Open_Click"
                                                 Tag="{Binding BookId}">
-                                                <Button.Template>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Button.Template>
                                             </Button>
 
                                             <Button Content="Удалить"
+                                                Style="{StaticResource DangerOutlineButtonStyle}"
                                                 Margin="0,8,0,0"
                                                 Padding="12,6"
-                                                Background="#F3F6FA"
-                                                Foreground="#E74C3C"
-                                                BorderBrush="#E6EAF0"
-                                                BorderThickness="1"
-                                                Cursor="Hand"
                                                 Click="Remove_Click"
                                                 Tag="{Binding BookId}">
-                                                <Button.Template>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                                            CornerRadius="8">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Button.Template>
                                             </Button>
                                         </StackPanel>
                                     </Grid>

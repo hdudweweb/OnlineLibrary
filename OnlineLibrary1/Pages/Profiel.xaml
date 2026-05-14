@@ -41,18 +41,8 @@
                     <Button
                             Content="Обновить"
                             Padding="12,6"
-                            Background="#2E8B57"
-                            Foreground="White"
-                            Cursor="Hand"
-                            Click="Refresh_Click" Margin="659,0,0,0">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" >
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                            Style="{StaticResource SuccessButtonStyle}"
+                            Click="Refresh_Click" Margin="659,0,0,0"/>
                 </Grid>
             </Border>
 
@@ -116,15 +106,7 @@
                                     Background="#4A6FA5"
                                     Foreground="White"
                                     Cursor="Hand"
-                                    Click="UploadAvatar_Click">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}" >
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
+                                    Click="UploadAvatar_Click"/>
                         </StackPanel>
 
                         <Grid Grid.Column="1" Margin="16,0,0,0">
@@ -158,35 +140,13 @@
                                         Background="#4A6FA5"
                                         Foreground="White"
                                         Cursor="Hand"
-                                        Click="EditProfile_Click" Width="105">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}" >
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
+                                        Click="EditProfile_Click" Width="105"/>
 
                                 <Button Content="Сменить пароль"
+                                        Style="{StaticResource SecondaryButtonStyle}"
                                         Margin="10,0,0,0"
                                         Padding="12,6"
-                                        Background="#F3F6FA"
-                                        Foreground="#4A6FA5"
-                                        BorderBrush="#E6EAF0"
-                                        BorderThickness="1"
-                                        Cursor="Hand"
-                                        Click="ChangePassword_Click" Width="115">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
+                                        Click="ChangePassword_Click" Width="115"/>
                             </StackPanel>
                         </Grid>
                     </Grid>

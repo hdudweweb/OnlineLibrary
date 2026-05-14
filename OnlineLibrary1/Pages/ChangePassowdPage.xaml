@@ -128,38 +128,16 @@
                                 Orientation="Horizontal"
                                 Margin="0,14,0,0">
                         <Button Content="Сохранить"
+                                Style="{StaticResource SuccessButtonStyle}"
                                 Padding="14,7"
-                                Background="#2E8B57"
-                                Foreground="White"
-                                Cursor="Hand"
                                 Click="Save_Click" Width="85">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" >
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
                         </Button>
 
                         <Button Content="Отмена"
+                                Style="{StaticResource SecondaryButtonStyle}"
                                 Margin="10,0,0,0"
                                 Padding="14,7"
-                                Background="#F3F6FA"
-                                Foreground="#1F2D3D"
-                                BorderBrush="#E6EAF0"
-                                BorderThickness="1"
-                                Cursor="Hand"
                                 Click="Cancel_Click" Width="65">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
                         </Button>
                     </StackPanel>
                 </Grid>
