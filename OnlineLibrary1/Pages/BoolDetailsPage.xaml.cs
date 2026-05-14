@@ -180,11 +180,16 @@ namespace OnlineLibrary1.Pages
                 var img = ByteArrayToImageSource(coverBytes);
                 if (img != null)
                 {
-                    BookCoverBorder.Background = new ImageBrush(img) { Stretch = Stretch.UniformToFill };
+                    BookCoverImage.Source = img;
+                    BookCoverImage.Visibility = Visibility.Visible;
+                    BookCoverBorder.Background = Brushes.White;
                     BookIcon.Visibility = Visibility.Collapsed;
                     return;
                 }
             }
+
+            BookCoverImage.Source = null;
+            BookCoverImage.Visibility = Visibility.Collapsed;
 
             
             var hash = (TitleText.Text ?? "").GetHashCode();
