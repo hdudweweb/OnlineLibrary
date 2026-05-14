@@ -16,7 +16,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Header -->
             <Border Background="White"
                     CornerRadius="12"
                     BorderBrush="#E6EAF0"
@@ -41,7 +40,6 @@
                 </Grid>
             </Border>
 
-            <!-- Warning -->
             <Border x:Name="NotAuthPanel"
                     Grid.Row="1"
                     Margin="0,12,0,0"
@@ -56,7 +54,6 @@
                            TextWrapping="Wrap"/>
             </Border>
 
-            <!-- Form -->
             <Border Grid.Row="2"
                     Background="White"
                     CornerRadius="12"
@@ -73,7 +70,6 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Username -->
                     <TextBlock Text="Имя пользователя" Foreground="#637081"/>
                     <Border Margin="0,6,0,0"
                             Background="#F3F6FA"
@@ -89,7 +85,6 @@
                                  Foreground="#1F2D3D"/>
                     </Border>
 
-                    <!-- Email -->
                     <TextBlock Grid.Row="1" Margin="0,12,0,0" Text="Email" Foreground="#637081"/>
                     <Border Grid.Row="1"
                             Margin="0,18,0,0"
@@ -106,7 +101,6 @@
                                  Foreground="#1F2D3D"/>
                     </Border>
 
-                    <!-- Error -->
                     <TextBlock x:Name="ErrorText"
                                Grid.Row="2"
                                Margin="0,12,0,0"
@@ -114,7 +108,6 @@
                                Visibility="Collapsed"
                                TextWrapping="Wrap"/>
 
-                    <!-- Buttons -->
                     <StackPanel Grid.Row="3"
                                 Orientation="Horizontal"
                                 Margin="0,14,0,0">

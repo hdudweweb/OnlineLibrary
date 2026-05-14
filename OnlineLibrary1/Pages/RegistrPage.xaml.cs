@@ -20,10 +20,6 @@ using System.Windows.Shapes;
 
 namespace OnlineLibrary1.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для RegistrPage.xaml
-    /// </summary>
-
     public partial class RegistrPage : Page
     {
         private readonly string _cs = ConfigurationManager.ConnectionStrings["bibleoteka"].ConnectionString;
@@ -61,7 +57,6 @@ namespace OnlineLibrary1.Pages
             string pass = PasswordBox.Password ?? "";
             string confirm = ConfirmPasswordBox.Password ?? "";
 
-            // Валидация
             if (username.Length < 2)
             {
                 ShowError("Имя пользователя должно быть минимум 2 символа.");
@@ -92,9 +87,6 @@ namespace OnlineLibrary1.Pages
                 return;
             }
 
-
-
-            // Регистрация в БД
             {
                 int newUserId;
 
@@ -102,7 +94,6 @@ namespace OnlineLibrary1.Pages
                 {
                     con.Open();
 
-                    // Проверка на существующий email
                     using (var cmdCheck = new SqlCommand(
                         "SELECT COUNT(*) FROM AuthUsers WHERE Email = @e", con))
                     {
@@ -115,7 +106,6 @@ namespace OnlineLibrary1.Pages
                         }
                     }
 
-                    // Создаём пользователя (RolesId = 2 -> Читатель)
                     using (var cmdUser = new SqlCommand(
                         "INSERT INTO Users (Username, Created, Email, RolesId) " +
                         "VALUES (@u, GETDATE(), @e, 2); " +
@@ -126,7 +116,6 @@ namespace OnlineLibrary1.Pages
                         newUserId = Convert.ToInt32(cmdUser.ExecuteScalar());
                     }
 
-                    // Создаём запись для входа (пароль хешируем как в твоём LoginPage)
                     using (var cmdAuth = new SqlCommand(
                         "INSERT INTO AuthUsers (AuthUsersId, [Password], Email) " +
                         "VALUES (@id, HASHBYTES('SHA2_256', @p), @e);", con))
@@ -138,15 +127,12 @@ namespace OnlineLibrary1.Pages
                     }
                 }
 
-                // Сессия + UI главного окна
                 AppSession.SignIn(newUserId, username, email, "Читатель", DateTime.Now);
                 (_mainWindow ?? (Window.GetWindow(this) as MainWindow))?.SetAuthorized(true);
 
                 MessageBox.Show("Регистрация успешна!");
                 NavigationService?.Navigate(new Profiel());
             }
-           
-           
         }
 
         private void ShowError(string text)

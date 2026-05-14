@@ -18,9 +18,6 @@ using System.Windows.Shapes;
 
 namespace OnlineLibrary1.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для AdminPage.xaml
-    /// </summary>
     public partial class AdminPage : Page
     {
         

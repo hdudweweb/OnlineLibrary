@@ -18,9 +18,6 @@ using System.Windows.Shapes;
 using OnlineLibrary1.Models;
 namespace OnlineLibrary1.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для CatalogPage.xaml
-    /// </summary>
     public partial class CatalogPage : Page
     {
 

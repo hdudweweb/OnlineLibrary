@@ -17,9 +17,6 @@ using System.Windows.Shapes;
 
 namespace OnlineLibrary1
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private MainWindow _mainWindows;

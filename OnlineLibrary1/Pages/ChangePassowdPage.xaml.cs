@@ -18,9 +18,6 @@ using System.Windows.Shapes;
 
 namespace OnlineLibrary1.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для ChangePassowdPage.xaml
-    /// </summary>
     public partial class ChangePassowdPage : Page
     {
         private readonly string _cs = ConfigurationManager.ConnectionStrings["bibleoteka"].ConnectionString;

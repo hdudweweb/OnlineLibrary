@@ -13,10 +13,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
-        
-
-        <!-- Список книг -->
         <Grid Margin="16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -24,7 +20,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Header -->
             <Border Background="White"  Padding="16"
                 BorderBrush="#E6EAF0" BorderThickness="1" CornerRadius="8">
                 <Grid>
@@ -42,7 +37,6 @@
                         
                     </StackPanel>
 
-                    <!-- Search -->
                     <Border Grid.Column="1" Background="#F3F6FA"  Padding="10"
                         BorderBrush="#E6EAF0" BorderThickness="1">
                         <Grid>
@@ -84,7 +78,6 @@
                 </Grid>
             </Border>
 
-            <!-- Actions -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,12,0,12">
                 <Button Content="Обновить"
                     Click="Refresh_Click"
@@ -129,9 +122,7 @@
                 </ComboBox>
             </StackPanel>
 
-            <!-- Content -->
             <Grid Grid.Row="2">
-                <!-- No results -->
                 <Border  x:Name="NoResultsPanel"
                     Background="White"
                     CornerRadius="12"
@@ -154,7 +145,6 @@
                     </StackPanel>
                 </Border>
 
-                <!-- List -->
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <ItemsControl x:Name="BooksList">
                         <ItemsControl.ItemTemplate>
@@ -172,13 +162,11 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <!-- Cover -->
                                         <Border Width="80" Height="110" CornerRadius="10" ClipToBounds="True" Background="#F3F6FA">
                                             <Image Source="{Binding CoverImage}"
                                                Stretch="UniformToFill"/>
                                         </Border>
 
-                                        <!-- Info -->
                                         <StackPanel Grid.Column="1" Margin="12,0,12,0">
                                             <TextBlock Text="{Binding Title}"
                                                    FontSize="16"
@@ -204,7 +192,6 @@
                                                    MaxHeight="40"/>
                                         </StackPanel>
 
-                                        <!-- Buttons -->
                                         <StackPanel Grid.Column="2" VerticalAlignment="Center">
                                             <Button Content="Открыть"
                                                 Padding="12,6"

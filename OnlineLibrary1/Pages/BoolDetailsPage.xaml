@@ -26,7 +26,6 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Обложка книги -->
             <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="6"
                     BorderBrush="#ddd" BorderThickness="1"
                     CornerRadius="5" 
@@ -34,7 +33,6 @@
                     VerticalAlignment="Top"
                     Background="#f0f8ff">
                 <Grid>
-                    <!-- Обложка -->
                     <Border x:Name="BookCoverBorder" 
                             CornerRadius="5">
                         <TextBlock x:Name="BookIcon" 
@@ -45,7 +43,6 @@
                                   Opacity="0.8"/>
                     </Border>
 
-                    <!-- Популярность -->
                     <Border Background="#4a6fa5"
                             CornerRadius="3"
                             HorizontalAlignment="Left"
@@ -66,7 +63,6 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Возрастной рейтинг -->
                     <Border x:Name="AgeRatingBorder"
                             Background="#e74c3c"
                             CornerRadius="3"
@@ -82,7 +78,6 @@
                 </Grid>
             </Border>
 
-            <!-- Название -->
             <TextBlock x:Name="TitleText" 
                       Grid.Row="0" Grid.Column="2"
                       FontSize="28" 
@@ -90,14 +85,12 @@
                       TextWrapping="Wrap"
                       Margin="0,0,0,10"/>
 
-            <!-- Автор -->
             <TextBlock x:Name="AuthorText" 
                       Grid.Row="1" Grid.Column="2"
                       FontSize="20"
                       Margin="0,0,0,15"
                       Foreground="#4a6fa5"/>
 
-            <!-- Основная информация -->
             <Border Grid.Row="2" Grid.Column="2"
                     BorderBrush="#e0e0e0" 
                     BorderThickness="0,1,0,1"
@@ -112,7 +105,6 @@
                         <ColumnDefinition Width="0"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Год -->
                     <StackPanel Grid.Column="0">
                         <TextBlock Text="Год издания" 
                                   FontSize="12"
@@ -122,7 +114,6 @@
                                   FontWeight="SemiBold"/>
                     </StackPanel>
 
-                    <!-- Страницы -->
                     <StackPanel Grid.Column="2">
                         <TextBlock Text="Страниц" 
                                   FontSize="12"
@@ -132,7 +123,6 @@
                                   FontWeight="SemiBold"/>
                     </StackPanel>
 
-                    <!-- Жанры -->
                     <StackPanel Grid.Column="4">
                         <TextBlock Text="Жанры" 
                                   FontSize="12"
@@ -145,7 +135,6 @@
                 </Grid>
             </Border>
 
-            <!-- ISBN и издательство -->
             <StackPanel Grid.Row="3" Grid.Column="2" 
                        Margin="0,15,0,15">
                 <TextBlock x:Name="IsbnText" 
@@ -155,13 +144,11 @@
                           FontSize="14"/>
             </StackPanel>
 
-            <!-- Кнопки действий -->
             <Border Grid.Row="4" Grid.Column="2"
                     BorderBrush="#e0e0e0" 
                     BorderThickness="0,1,0,1"
                     Padding="0,15">
                 <StackPanel>
-                    <!-- Основные кнопки -->
                     <StackPanel Orientation="Horizontal" 
                                Margin="0,0,0,10">
                         <Button x:Name="ReadBookButton"
@@ -184,7 +171,6 @@
                             </Button.Triggers>
                         </Button>
 
-                        <!-- Кнопка добавления в мои книги -->
                         <Button x:Name="AddToMyBooksButton"
                                 Content="Добавить в мои книги"
                                 Click="AddToMyBooks_Click"
@@ -206,7 +192,6 @@
                         </Button>
                     </StackPanel>
 
-                    <!-- Панель выбора статуса (скрыта по умолчанию) -->
                     <Border x:Name="StatusSelectionPanel"
                            Visibility="Collapsed"
                            BorderBrush="#ddd"
@@ -251,7 +236,6 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Статус книги в моей библиотеке -->
                     <Border x:Name="BookStatusPanel"
                            Visibility="Collapsed"
                            BorderBrush="#27ae60"
@@ -284,7 +268,6 @@
                 </StackPanel>
             </Border>
 
-            <!-- Описание -->
             <Border Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3"
                     BorderBrush="#ddd" 
                     BorderThickness="1"
@@ -305,7 +288,6 @@
                 </StackPanel>
             </Border>
 
-            <!-- Дополнительная информация -->
             <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3"
                     BorderBrush="#ddd" 
                     BorderThickness="1"

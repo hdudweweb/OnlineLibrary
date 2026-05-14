@@ -19,9 +19,6 @@ using OnlineLibrary1.Models;
 
 namespace OnlineLibrary1.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для BoolDetailsPage.xaml
-    /// </summary>
     public partial class BoolDetailsPage : Page
     {
         private readonly string connectionString =

@@ -19,9 +19,6 @@ using System.Windows.Shapes;
 using OnlineLibrary1.Models;
 namespace OnlineLibrary1.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для MyBooksPage.xaml
-    /// </summary>
     public partial class MyBooksPage : Page
     {
         private readonly string connectionString =
@@ -149,8 +146,6 @@ namespace OnlineLibrary1.Pages
             NoResultsPanel.Visibility = filtered.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        // --- UI handlers ---
-
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) => ApplyFilter();
 
         private void ClearSearch_Click(object sender, RoutedEventArgs e)
@@ -236,8 +231,6 @@ namespace OnlineLibrary1.Pages
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        // --- helpers ---
 
         private static BitmapImage ByteArrayToBitmapImage(byte[] bytes)
         {

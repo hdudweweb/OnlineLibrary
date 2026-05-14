@@ -14,7 +14,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Панель поиска -->
         <Border Grid.Row="0" 
                 Background="#f5f5f5" 
                 Padding="15"
@@ -27,7 +26,6 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Поле поиска -->
                 <TextBox Name="SearchTextBox" 
                         Grid.Column="0"
                         TextChanged="SearchTextBox_TextChanged"
@@ -39,14 +37,12 @@
                     </TextBox.InputBindings>
                 </TextBox>
 
-                <!-- Кнопка поиска -->
                 <Button Grid.Column="1"
                         Content="Поиск"
                         Click="SearchButton_Click"
                         Margin="10,0"
                         Padding="15,5"/>
 
-                <!-- Фильтр поиска -->
                 <ComboBox Name="SearchTypeComboBox" 
                          Grid.Column="2"
                          Width="150"
@@ -58,7 +54,6 @@
                     <ComboBoxItem Content="По ISBN"/>
                 </ComboBox>
 
-                <!-- Дополнительные фильтры -->
                 <StackPanel Grid.Column="3" 
                            Orientation="Horizontal">
                     <ComboBox Name="GenreFilterComboBox" 
@@ -108,17 +103,14 @@
             </Grid>
         </Border>
 
-        <!-- Результаты поиска -->
         <ScrollViewer Grid.Row="1">
             <UniformGrid Name="BooksContainer" 
                         Columns="4"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch">
-                <!-- Книги будут добавляться динамически -->
             </UniformGrid>
         </ScrollViewer>
 
-        <!-- Сообщение если нет результатов -->
         <Border Name="NoResultsPanel" 
                Grid.Row="1"
                Visibility="Collapsed"

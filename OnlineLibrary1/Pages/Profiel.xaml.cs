@@ -21,9 +21,6 @@ using System.Windows.Shapes;
 
 namespace OnlineLibrary1.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для Profiel.xaml
-    /// </summary>
     public partial class Profiel : Page
     {
         private readonly string _cs = ConfigurationManager.ConnectionStrings["bibleoteka"].ConnectionString;
@@ -56,21 +53,12 @@ namespace OnlineLibrary1.Pages
                 NotAuthPanel.Visibility = Visibility.Visible;
                 SubtitleText.Text = "Данные гостя (для полного доступа выполните вход)";
 
-                
                 TryLoadProfileFromFile();
                 return;
             }
 
             NotAuthPanel.Visibility = Visibility.Collapsed;
             SubtitleText.Text = "Данные вашего аккаунта";
-
-            // Из сессии
-            //UsernameText.Text = string.IsNullOrWhiteSpace(AppSession.Username) ? "—" : AppSession.Username;
-            //EmailText.Text = string.IsNullOrWhiteSpace(AppSession.Email) ? "—" : AppSession.Email;
-            //RoleText.Text = string.IsNullOrWhiteSpace(AppSession.Role) ? "—" : AppSession.Role;
-            //CreatedText.Text = AppSession.CreatedAt.HasValue ? AppSession.CreatedAt.Value.ToString("dd.MM.yyyy") : "—";
-
-            // Из БД 
             if (_userId.HasValue)
             {
                 try
@@ -124,8 +112,6 @@ namespace OnlineLibrary1.Pages
 
                 var raw = File.ReadAllText("profile.txt");
                 var parts = raw.Split('|');
-
-                
                 var name = parts.Length > 0 ? parts[0].Trim() : "Гость";
                 var email = parts.Length > 1 ? parts[1].Trim() : "—";
                 var created = parts.Length > 2 ? parts[2].Trim() : "—";
