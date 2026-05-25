@@ -189,9 +189,3 @@ GO
 ALTER TABLE Favorites
 ADD CONSTRAINT CK_Favorites_Status
 CHECK (Status IN (N'Читаю', N'В планах', N'Прочитано', N'В избранном'));
-
-INSERT INTO Users (Username, Created, Email, RolesId) VALUES
-(N'Admin', GETDATE(), N'ad@ad.com', 1 )
-
-INSERT INTO AuthUsers (AuthUsersId, [Password], Email) VALUES
-(5, HASHBYTES('SHA2_256', N'123'), N'ad@ad.com')
